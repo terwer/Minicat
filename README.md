@@ -47,3 +47,9 @@ servlet位置: webapps/demo2/server/LagouServlet.class
 
 servlet位置: webapps/demo3/server/LagouServlet.class     
 访问url: http://localhost:8080/demo3/lagou   
+
+# 遇到的问题
+
+1、默认的类加载器使用双亲遍历，会导致不同应用加载同名sevlet的时候只会加载前面的
+
+解决: 自定义类加载器
