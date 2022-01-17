@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<server>
+  <Service>
+      <Engine>
+          <!--
+              备注：这里为了简单，使用class的相对路径，也可以使用绝对路径
+              <Host appBase="/Users/terwer/Documents/workspace/Minicat/target/webapps">
+          -->
+          <Host appBase="webapps">
+              <Context docBase="/demo1" path="/demo1"/>
+              <Context docBase="/demo2" path="/demo2"/>
+              <Context docBase="/demo3" path="/demo3"/>
+          </Host>
+      </Engine>
+  </Service>
+</server>
