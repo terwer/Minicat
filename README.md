@@ -27,33 +27,39 @@
 
 # 4.0实现效果
 
-webapps目录 
-
+webapps目录  
 src/resources/webapps
 
-静态资源    
-http://localhost:8080/index.html     
+静态资源  
+位置: webapps/index.html  
+访问url: http://localhost:8080/index.html     
 servlet     
-http://localhost:8080/lagou     
+位置: webapps/server/LagouServlet.class       
+访问url: http://localhost:8080/lagou     
 
-demo1
+## demo1
 
-| 资源类型 | 位置 | 访问url |
-|  ----  | ----  |  ----  |
-| 静态资源 | webapps/demo1/index.html | http://localhost:8080/demo1/index.html | 
-| servlet | webapps/demo1/server/LagouServlet.class  | http://localhost:8080/demo1/lagou |
+* 静态资源        
+webapps/demo1/index.html    
+http://localhost:8080/demo1/index.html       
+* servlet   
+webapps/demo1/server/LagouServlet.class     
+http://localhost:8080/demo1/lagou   
 
-demo2
+## demo2
 
-| 资源类型 | 位置 | 访问url |
-|  ----  | ----  |  ----  |
-| 静态资源 | webapps/demo2/index.html | http://localhost:8080/demo2/index.html | 
-| servlet | webapps/demo2/server/LagouServlet.class  | http://localhost:8080/demo2/lagou |
+* 静态资源        
+  webapps/demo2/index.html    
+  http://localhost:8080/demo2/index.html
+* servlet   
+  webapps/demo2/server/LagouServlet.class     
+  http://localhost:8080/demo2/lagou   
 
-demo3
+## demo3
 
-| 资源类型 | 位置 | 访问url |
-|  ----  | ----  |  ----  |
-| 静态资源 | webapps/demo3/index.html | http://localhost:8080/demo3/index.html | 
-| servlet | webapps/demo3/server/LagouServlet.class  | http://localhost:8080/demo3/lagou |
-
+* 静态资源        
+  webapps/demo3/index.html    
+  http://localhost:8080/demo3/index.html
+* servlet   
+  webapps/demo3/server/LagouServlet.class     
+  http://localhost:8080/demo3/lagou   
