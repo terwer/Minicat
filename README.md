@@ -2,10 +2,14 @@
 
 简易版的Tomcat，主要实现了静态资源和动态Servlet的功能
 
+# 运行
+
+直接执行 `Minicat` 模块的 `src/main/java/server/Bootstrap.java` 的 `main` 方法即可启动 Minicat
+
 # 回顾Minicat1.0到3.0
 
 ## Minicat 1.0版本
-需求：浏览器请求http://localhost:8080,返回一个固定的字符串到页面"Hello Minicat!"
+需求：浏览器请求 http://localhost:8080 ,返回一个固定的字符串到页面 "Hello Minicat!"
 
 ## Minicat 2.0版本
 需求：封装Request和Response对象，返回html静态资源文件
@@ -23,10 +27,39 @@
 
 # 4.0实现效果
 
-wenapps目录 测试url
+webapps目录  
+src/resources/webapps
 
-http://localhost:8080/lagou/demo1
+静态资源  
+位置: webapps/index.html  
+访问url: http://localhost:8080/index.html     
+servlet     
+位置: webapps/server/LagouServlet.class       
+访问url: http://localhost:8080/lagou     
 
-http://localhost:8080/lagou/demo2
+## demo1
 
-http://localhost:8080/lagou/demo3
+* 静态资源        
+webapps/demo1/index.html    
+http://localhost:8080/demo1/index.html       
+* servlet   
+webapps/demo1/server/LagouServlet.class     
+http://localhost:8080/demo1/lagou   
+
+## demo2
+
+* 静态资源        
+  webapps/demo2/index.html    
+  http://localhost:8080/demo2/index.html
+* servlet   
+  webapps/demo2/server/LagouServlet.class     
+  http://localhost:8080/demo2/lagou   
+
+## demo3
+
+* 静态资源        
+  webapps/demo3/index.html    
+  http://localhost:8080/demo3/index.html
+* servlet   
+  webapps/demo3/server/LagouServlet.class     
+  http://localhost:8080/demo3/lagou   

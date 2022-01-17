@@ -6,6 +6,7 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,7 +22,9 @@ import java.util.concurrent.*;
  */
 public class Bootstrap {
 
-    /**定义socket监听的端口号*/
+    /**
+     * 定义socket监听的端口号
+     */
     private int port = 8080;
 
     public int getPort() {
@@ -41,10 +44,15 @@ public class Bootstrap {
         // 加载解析相关的配置，web.xml
         loadServlet();
 
+        // 解析server.xml，读取webapps路径
+        // 遍历webapps，每个应用通过单独设置类加载器（防止默认的类加载机制导致不同应用的相同class问题）
+        // 读取web.xml的servlet配置，生成servlet保存到servletMap
+        // 保存的key需要加上应用的前缀
+        loadWebapps();
 
         // 定义一个线程池
         int corePoolSize = 10;
-        int maximumPoolSize =50;
+        int maximumPoolSize = 50;
         long keepAliveTime = 100L;
         TimeUnit unit = TimeUnit.SECONDS;
         BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(50);
@@ -151,15 +159,76 @@ public class Bootstrap {
          * 完成Minicat 4.0版本
          * 需求：实现webapps部署，并支持多项目部署
          */
-        while(true) {
+        while (true) {
             Socket socket = serverSocket.accept();
-            RequestProcessor requestProcessor = new RequestProcessor(socket,servletMap);
+            RequestProcessor requestProcessor = new RequestProcessor(socket, servletMap);
             threadPoolExecutor.execute(requestProcessor);
         }
     }
 
+    /**
+     * 加载解析server.xml，初始化webapps里面的servlet
+     */
+    private void loadWebapps() {
+        InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("server.xml");
+        SAXReader saxReader = new SAXReader();
 
-    private Map<String,HttpServlet> servletMap = new HashMap<String,HttpServlet>();
+        try {
+            Document document = saxReader.read(resourceAsStream);
+            Element element = document.getRootElement();
+
+            // 为了简单，暂不考虑多个host的情况，以单个host为例
+            List<Element> hosts = element.selectNodes("//Host");
+            // 未找到主机，不处理
+            if (null == hosts || hosts.size() == 0) {
+                return;
+            }
+
+            Element host = hosts.get(0);
+            String appBase = host.attributeValue("appBase");
+
+            // 找到appBase
+            String absoluteAppBase = this.getClass().getResource("../").getFile() + appBase;
+            File file = new File(absoluteAppBase);
+            if (!file.exists()) {
+                System.out.println("webapps目录不存在，将不会加载任何应用");
+                return;
+            }
+            System.out.println("准备从下面的目录加载webapps:" + absoluteAppBase);
+
+            File[] dirs = file.listFiles();
+
+            for (File dir : dirs) {
+                if (!dir.isDirectory()) {
+                    continue;
+                }
+
+                // 遍历每个应用
+                String appPath = "/" + dir.getName();
+
+                List<Element> contextList = host.elements();
+                for (Element context : contextList) {
+                    String docBase = context.attributeValue("docBase");
+                    if (!appPath.equals(docBase)) {
+                        continue;
+                    }
+
+                    String appPrefix = context.attributeValue("path");
+                    String absAppPath = absoluteAppBase + docBase;
+
+                    System.out.println("开始加载应用:" + appPrefix + ",应用路径:" + absAppPath);
+                    // 加载各个应用的servlet
+                    loadWebappsServlet(appPrefix, absAppPath);
+                }
+            }
+            System.out.println("加载webapps的servlet完成");
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private Map<String, HttpServlet> servletMap = new HashMap<String, HttpServlet>();
 
     /**
      * 加载解析web.xml，初始化Servlet
@@ -174,7 +243,7 @@ public class Bootstrap {
 
             List<Element> selectNodes = rootElement.selectNodes("//servlet");
             for (int i = 0; i < selectNodes.size(); i++) {
-                Element element =  selectNodes.get(i);
+                Element element = selectNodes.get(i);
                 // <servlet-name>lagou</servlet-name>
                 Element servletnameElement = (Element) element.selectSingleNode("servlet-name");
                 String servletName = servletnameElement.getStringValue();
@@ -191,6 +260,7 @@ public class Bootstrap {
 
             }
 
+            System.out.println("加载servlet完成");
         } catch (DocumentException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -203,9 +273,14 @@ public class Bootstrap {
 
     }
 
+    private void loadWebappsServlet(String appPrefix, String absAppPath) {
+
+    }
+
 
     /**
      * Minicat 的程序启动入口
+     *
      * @param args
      */
     public static void main(String[] args) {
