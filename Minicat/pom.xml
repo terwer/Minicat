@@ -8,7 +8,6 @@
     <artifactId>Minicat</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-
     <dependencies>
         <dependency>
             <groupId>dom4j</groupId>

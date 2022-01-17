@@ -31,6 +31,11 @@ webapps目录
 
 src/resources/webapps
 
+静态资源    
+http://localhost:8080/index.html     
+servlet     
+http://localhost:8080/lagou     
+
 demo1
 
 | 资源类型 | 位置 | 访问url |
