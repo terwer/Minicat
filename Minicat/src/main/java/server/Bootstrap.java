@@ -63,9 +63,6 @@ public class Bootstrap {
         );
 
 
-
-
-
         /*
             完成Minicat 1.0版本
             需求：浏览器请求http://localhost:8080,返回一个固定的字符串到页面"Hello Minicat!"
@@ -136,13 +133,11 @@ public class Bootstrap {
             RequestProcessor requestProcessor = new RequestProcessor(socket,servletMap);
             requestProcessor.start();
         }*/
-
-
-
-        System.out.println("=========>>>>>>使用线程池进行多线程改造");
+        // System.out.println("=========>>>>>>使用线程池进行多线程改造");
         /*
             多线程改造（使用线程池）
          */
+        /*
         while(true) {
 
             Socket socket = serverSocket.accept();
@@ -150,9 +145,17 @@ public class Bootstrap {
             //requestProcessor.start();
             threadPoolExecutor.execute(requestProcessor);
         }
+        */
 
-
-
+        /**
+         * 完成Minicat 4.0版本
+         * 需求：实现webapps部署，并支持多项目部署
+         */
+        while(true) {
+            Socket socket = serverSocket.accept();
+            RequestProcessor requestProcessor = new RequestProcessor(socket,servletMap);
+            threadPoolExecutor.execute(requestProcessor);
+        }
     }
 
 
@@ -187,8 +190,6 @@ public class Bootstrap {
                 servletMap.put(urlPattern, (HttpServlet) Class.forName(servletClass).newInstance());
 
             }
-
-
 
         } catch (DocumentException e) {
             e.printStackTrace();
