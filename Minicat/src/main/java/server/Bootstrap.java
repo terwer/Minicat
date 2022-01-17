@@ -6,12 +6,10 @@ import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +47,8 @@ public class Bootstrap {
         // 读取web.xml的servlet配置，生成servlet保存到servletMap
         // 保存的key需要加上应用的前缀
         loadWebapps();
+
+        System.out.println("全部加载完成，servletMap:"+servletMap);
 
         // 定义一个线程池
         int corePoolSize = 10;
@@ -188,7 +188,8 @@ public class Bootstrap {
             String appBase = host.attributeValue("appBase");
 
             // 找到appBase
-            String absoluteAppBase = this.getClass().getResource("../").getFile() + appBase;
+            String classPath = this.getClass().getResource(".").getFile();
+            String absoluteAppBase = Paths.get(classPath).getParent().getParent().getParent().toAbsolutePath().toString() +"/"+ appBase;
             File file = new File(absoluteAppBase);
             if (!file.exists()) {
                 System.out.println("webapps目录不存在，将不会加载任何应用");
@@ -274,7 +275,46 @@ public class Bootstrap {
     }
 
     private void loadWebappsServlet(String appPrefix, String absAppPath) {
+        InputStream resourceAsStream = null;
+        try {
+            resourceAsStream = new FileInputStream(absAppPath + "/web.xml");
 
+            SAXReader saxReader = new SAXReader();
+
+            Document document = saxReader.read(resourceAsStream);
+            Element rootElement = document.getRootElement();
+
+            List<Element> selectNodes = rootElement.selectNodes("//servlet");
+            for (int i = 0; i < selectNodes.size(); i++) {
+                Element element = selectNodes.get(i);
+                // <servlet-name>lagou</servlet-name>
+                Element servletnameElement = (Element) element.selectSingleNode("servlet-name");
+                String servletName = servletnameElement.getStringValue();
+                // <servlet-class>server.LagouServlet</servlet-class>
+                Element servletclassElement = (Element) element.selectSingleNode("servlet-class");
+                String servletClass = servletclassElement.getStringValue();
+
+
+                // 根据servlet-name的值找到url-pattern
+                Element servletMapping = (Element) rootElement.selectSingleNode("/web-app/servlet-mapping[servlet-name='" + servletName + "']");
+                // /lagou
+                String urlPattern = servletMapping.selectSingleNode("url-pattern").getStringValue();
+                servletMap.put(appPrefix + urlPattern, (HttpServlet) Class.forName(servletClass).newInstance());
+
+            }
+
+            System.out.println("加载应用" + appPrefix + "的servlet完成");
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
 

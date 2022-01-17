@@ -27,39 +27,23 @@
 
 # 4.0实现效果
 
-webapps目录  
-src/resources/webapps
+webapps目录      
+Minicat项目根目录/webapps
 
-静态资源  
-位置: webapps/index.html  
-访问url: http://localhost:8080/index.html     
-servlet     
-位置: webapps/server/LagouServlet.class       
+servlet位置: webapps/server/LagouServlet.class       
 访问url: http://localhost:8080/lagou     
 
 ## demo1
 
-* 静态资源        
-webapps/demo1/index.html    
-http://localhost:8080/demo1/index.html       
-* servlet   
-webapps/demo1/server/LagouServlet.class     
-http://localhost:8080/demo1/lagou   
+servlet位置: webapps/demo1/server/LagouServlet.class     
+访问url: http://localhost:8080/demo1/lagou   
 
 ## demo2
 
-* 静态资源        
-  webapps/demo2/index.html    
-  http://localhost:8080/demo2/index.html
-* servlet   
-  webapps/demo2/server/LagouServlet.class     
-  http://localhost:8080/demo2/lagou   
+servlet位置: webapps/demo2/server/LagouServlet.class     
+访问url: http://localhost:8080/demo2/lagou   
 
 ## demo3
 
-* 静态资源        
-  webapps/demo3/index.html    
-  http://localhost:8080/demo3/index.html
-* servlet   
-  webapps/demo3/server/LagouServlet.class     
-  http://localhost:8080/demo3/lagou   
+servlet位置: webapps/demo3/server/LagouServlet.class     
+访问url: http://localhost:8080/demo3/lagou   
