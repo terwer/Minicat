@@ -18,9 +18,11 @@ import java.nio.file.Paths;
 public class MyClassLoader extends ClassLoader {
 
     private String absAppPath;
+    private String servletClass;
 
-    public MyClassLoader(String absAppPath) {
+    public MyClassLoader(String absAppPath, String servletClass) {
         this.absAppPath = absAppPath;
+        this.servletClass = servletClass;
     }
 
     /**
@@ -32,7 +34,18 @@ public class MyClassLoader extends ClassLoader {
      */
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
-        String classFullPath = "file://" + absAppPath + "/" + name.replaceAll("\\.","/") + ".class";
+        // 这里要注意：如果不是servlet，需要使用双亲委派
+        // 因为应用里面会使用Minicat里面定义的类
+        // 而这些类没必要拷贝一份到应用里面
+        // 只有servlet才去跳过双亲委派
+        if (!name.equals(this.servletClass)) {
+            System.out.println("非servlet，不使用自定义类加载器:" + name);
+            Class<?> clazz = this.getClass().getClassLoader().loadClass(name);
+            return clazz;
+        }
+
+        String filePath = absAppPath + "/" + name.replaceAll("\\.", "/") + ".class";
+        String classFullPath = "file://" + filePath;
         System.out.println("MyClassLoader开始加载:" + classFullPath);
 
         byte[] classBytes = null;

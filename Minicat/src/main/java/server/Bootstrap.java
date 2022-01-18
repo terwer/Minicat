@@ -49,7 +49,7 @@ public class Bootstrap {
         // 保存的key需要加上应用的前缀
         loadWebapps();
 
-        System.out.println("全部加载完成，servletMap:"+servletMap);
+        System.out.println("全部加载完成，servletMap:" + servletMap);
 
         // 定义一个线程池
         int corePoolSize = 10;
@@ -190,13 +190,13 @@ public class Bootstrap {
 
             // 找到appBase
             String classPath = this.getClass().getResource(".").getFile();
-            String absoluteAppBase = Paths.get(classPath).getParent().getParent().getParent().toAbsolutePath().toString() +"/"+ appBase;
+            String absoluteAppBase = Paths.get(classPath).getParent().getParent().getParent().toAbsolutePath().toString() + "/" + appBase;
             File file = new File(absoluteAppBase);
             if (!file.exists()) {
                 System.out.println("webapps目录不存在，将不会加载任何应用");
                 return;
             }
-            System.out.println("准备从下面的目录加载webapps:" + absoluteAppBase+"\n");
+            System.out.println("准备从下面的目录加载webapps:" + absoluteAppBase + "\n");
 
             File[] dirs = file.listFiles();
 
@@ -302,11 +302,16 @@ public class Bootstrap {
                 String urlPattern = servletMapping.selectSingleNode("url-pattern").getStringValue();
 
                 // 使用自定义的类加载器加载
-                MyClassLoader loader = new MyClassLoader(absAppPath);
+                MyClassLoader loader = new MyClassLoader(absAppPath, servletClass);
                 Class<?> aClass = loader.loadClass(servletClass);
 
                 // 注意：下面的会从默认的类加载器加载
                 //  Class<?> aClass = Class.forName(servletClass);
+
+                // 加载失败不添加
+                if (null == aClass) {
+                    continue;
+                }
 
                 servletMap.put(appPrefix + urlPattern, (HttpServlet) aClass.newInstance());
 
