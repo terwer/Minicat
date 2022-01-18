@@ -1,5 +1,6 @@
 package server;
 
+import classloader.MyClassLoader;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -195,7 +196,7 @@ public class Bootstrap {
                 System.out.println("webapps目录不存在，将不会加载任何应用");
                 return;
             }
-            System.out.println("准备从下面的目录加载webapps:" + absoluteAppBase);
+            System.out.println("准备从下面的目录加载webapps:" + absoluteAppBase+"\n");
 
             File[] dirs = file.listFiles();
 
@@ -299,11 +300,19 @@ public class Bootstrap {
                 Element servletMapping = (Element) rootElement.selectSingleNode("/web-app/servlet-mapping[servlet-name='" + servletName + "']");
                 // /lagou
                 String urlPattern = servletMapping.selectSingleNode("url-pattern").getStringValue();
-                servletMap.put(appPrefix + urlPattern, (HttpServlet) Class.forName(servletClass).newInstance());
+
+                // 使用自定义的类加载器加载
+                MyClassLoader loader = new MyClassLoader(absAppPath);
+                Class<?> aClass = loader.findClass(servletClass);
+
+                // 注意：下面的会从默认的类加载器加载
+                //  Class<?> aClass = Class.forName(servletClass);
+
+                servletMap.put(appPrefix + urlPattern, (HttpServlet) aClass.newInstance());
 
             }
 
-            System.out.println("加载应用" + appPrefix + "的servlet完成");
+            System.out.println("加载应用" + appPrefix + "的servlet完成\n");
         } catch (DocumentException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
