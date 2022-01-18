@@ -303,7 +303,7 @@ public class Bootstrap {
 
                 // 使用自定义的类加载器加载
                 MyClassLoader loader = new MyClassLoader(absAppPath);
-                Class<?> aClass = loader.findClass(servletClass);
+                Class<?> aClass = loader.loadClass(servletClass);
 
                 // 注意：下面的会从默认的类加载器加载
                 //  Class<?> aClass = Class.forName(servletClass);

@@ -26,14 +26,14 @@ public class MyClassLoader extends ClassLoader {
     /**
      * 通过指定全路径记载class文件
      *
-     * @param clssFullPath class文件全路径
+     * @param name class文件路径（包名+class文件名）
      * @return Class<?>
      * @throws ClassNotFoundException
      */
     @Override
-    public Class<?> findClass(String name) throws ClassNotFoundException {
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
         String classFullPath = "file://" + absAppPath + "/" + name.replaceAll("\\.","/") + ".class";
-        System.out.println("MyCladdLoader开始加载加载:" + classFullPath);
+        System.out.println("MyClassLoader开始加载:" + classFullPath);
 
         byte[] classBytes = null;
         Path path = null;
